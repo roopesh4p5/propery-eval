@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Ensure main content area scrolls properly */
+.main-content-area {
+  height: calc(100vh - 4rem); /* Subtract header height */
+  overflow-y: auto;
+}
+
+/* Custom utility classes */
+.container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}

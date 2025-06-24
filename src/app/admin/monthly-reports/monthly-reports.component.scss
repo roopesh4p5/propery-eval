@@ -1,0 +1,33 @@
+.container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+// Custom styles for the table
+.overflow-x-auto {
+  overflow-x: auto;
+  
+  table {
+    min-width: 100%;
+    
+    th, td {
+      white-space: nowrap;
+      padding: 0.5rem 0.75rem;
+    }
+    
+    th {
+      position: sticky;
+      top: 0;
+      background-color: #f9fafb;
+      z-index: 10;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .overflow-x-auto {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    width: calc(100% + 2rem);
+  }
+}

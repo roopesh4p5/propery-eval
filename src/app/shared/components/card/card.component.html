@@ -1,0 +1,14 @@
+<div [ngClass]="cardClasses">
+  <div *ngIf="hasHeader && (title || subtitle)" class="px-4 py-3 border-b border-gray-200">
+    <h3 *ngIf="title" class="text-lg font-medium text-gray-900">{{ title }}</h3>
+    <p *ngIf="subtitle" class="mt-1 text-sm text-gray-500">{{ subtitle }}</p>
+  </div>
+  
+  <div [ngClass]="bodyClasses">
+    <ng-content></ng-content>
+  </div>
+  
+  <div *ngIf="hasFooter" class="px-4 py-3 bg-gray-50 border-t border-gray-200">
+    <ng-content select="[card-footer]"></ng-content>
+  </div>
+</div>

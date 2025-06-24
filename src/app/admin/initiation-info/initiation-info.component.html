@@ -1,0 +1,222 @@
+<div class="container-custom py-6">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Manage Initiation Info</h1>
+    <p class="mt-2 text-gray-600">Filter and view initiation information</p>
+  </div>
+
+  <!-- Success and Error Messages -->
+  <div class="max-w-5xl mx-auto mb-6">
+    <app-alert *ngIf="success" type="success" [message]="success" (dismissed)="success = ''"></app-alert>
+    <app-alert *ngIf="error" type="error" [message]="error" (dismissed)="error = ''"></app-alert>
+  </div>
+
+  <!-- Filter Form -->
+  <div class="mt-6  mx-auto">
+    <app-card title="Filter Initiation Info" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <!-- Form Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Bank Field -->
+          <div>
+            <label for="bank" class="block text-sm font-medium text-gray-700">By Bank: *</label>
+            <select
+              id="bank"
+              formControlName="bank"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['bank'].invalid && f['bank'].touched}"
+            >
+              <option value="" disabled selected>Select Bank</option>
+              <option *ngFor="let bank of banks" [value]="bank.Bank">{{ bank.Bank }}</option>
+            </select>
+            <div *ngIf="loadingBanks" class="text-sm text-gray-500 mt-1">Loading banks...</div>
+            <div *ngIf="f['bank'].invalid && f['bank'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['bank'].errors?.['required']">Bank is required</div>
+            </div>
+          </div>
+
+          <!-- Branch Field -->
+          <div>
+            <label for="branch" class="block text-sm font-medium text-gray-700">Filter By Branch: *</label>
+            <select
+              id="branch"
+              formControlName="branch"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['branch'].invalid && f['branch'].touched}"
+            >
+              <option value="" disabled selected>Select Branch</option>
+              <option *ngFor="let branch of branches" [value]="branch.Branch">{{ branch.Branch }}</option>
+            </select>
+            <div *ngIf="loadingBranches" class="text-sm text-gray-500 mt-1">Loading branches...</div>
+            <div *ngIf="f['branch'].invalid && f['branch'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['branch'].errors?.['required']">Branch is required</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <app-button
+            type="button"
+            variant="secondary"
+            (click)="clearForm()">
+            Clear
+          </app-button>
+
+          <app-button
+            type="submit"
+            variant="primary"
+            size="lg"
+            [loading]="submitting"
+            [disabled]="filterForm.invalid || submitting">
+            Submit
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- Results Table -->
+  <div *ngIf="initiationInfo.length > 0" class="mt-10 max-w-full mx-auto overflow-hidden">
+    <app-card title="Initiation Information" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <!-- Loading State -->
+      <div *ngIf="submitting" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!submitting" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mourya Ref No</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Request</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bankers / Agent Name</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Ref No</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mourya Branch</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Branch</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name of Customer</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Number</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case Type</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address of the Propery</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Initiated To</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Information</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status of Report</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">REPORTED BY</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Postal Address Visit</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Date</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Date</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Map Link</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person Name</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person Number</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let item of paginatedItems">
+              <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex space-x-2">
+                  <button
+                    class="text-blue-600 hover:text-blue-900"
+                    title="View">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.MouryaRefNo }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.DateOfRequest }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BankersAgentName }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BankRefNo }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Bank }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.MouryaBranch }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.ClientBranch }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.NameOfCustomer }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.ContactNumber }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.CaseType }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.AddressOfProperty }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.VisitInitiatedTo }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.DocumentInformation }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.StatusOfReport }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Remarks }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.ReportedBy }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.PostalAddressVisit }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.VisitDate }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.ReportDate }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.MapLink }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.ContactPersonName }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.ContactPersonNumber }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+          <div class="flex-1 flex justify-between sm:hidden">
+            <button
+              (click)="changePage(currentPage - 1)"
+              [disabled]="currentPage === 1"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Previous
+            </button>
+            <button
+              (click)="changePage(currentPage + 1)"
+              [disabled]="currentPage === totalPages"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Next
+            </button>
+          </div>
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing
+                <span class="font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span>
+                to
+                <span class="font-medium">{{ (currentPage * pageSize > totalItems) ? totalItems : currentPage * pageSize }}</span>
+                of
+                <span class="font-medium">{{ totalItems }}</span>
+                results
+              </p>
+            </div>
+            <div>
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button
+                  (click)="changePage(currentPage - 1)"
+                  [disabled]="currentPage === 1"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Previous</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <button
+                  *ngFor="let page of pages"
+                  (click)="changePage(page)"
+                  [ngClass]="{'bg-blue-50 border-blue-500 text-blue-600': page === currentPage, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': page !== currentPage}"
+                  class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                  {{ page }}
+                </button>
+                <button
+                  (click)="changePage(currentPage + 1)"
+                  [disabled]="currentPage === totalPages"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Next</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>

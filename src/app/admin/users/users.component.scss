@@ -1,0 +1,19 @@
+.container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+// Add any additional styles specific to the users component here
+
+// Highlight effect for the form when editing a user
+.user-form-container {
+  transition: all 0.3s ease-in-out;
+
+  &.highlight-form {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    transform: translateY(-4px);
+    background-color: rgba(59, 130, 246, 0.05);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+}
+

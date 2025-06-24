@@ -1,0 +1,274 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">Manage Report Engineers</h1>
+
+  <!-- Alert Messages -->
+  <div *ngIf="success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+    <span class="block sm:inline">{{ success }}</span>
+    <span class="absolute top-0 bottom-0 right-0 px-4 py-3" (click)="success = ''">
+      <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <title>Close</title>
+        <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+      </svg>
+    </span>
+  </div>
+  
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+    <span class="block sm:inline">{{ error }}</span>
+    <span class="absolute top-0 bottom-0 right-0 px-4 py-3" (click)="error = ''">
+      <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <title>Close</title>
+        <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+      </svg>
+    </span>
+  </div>
+
+  <!-- Engineer Form -->
+  <div class="mb-8 engineer-form">
+    <app-card [title]="isEditing ? 'Edit Report Engineer' : 'Add Report Engineer'" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <form [formGroup]="engineerForm" (ngSubmit)="onSubmit()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Name Field -->
+          <div class="col-span-1">
+            <label for="name" class="block text-sm font-medium text-gray-700">Name *</label>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name" 
+              placeholder="Enter user Name"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['name'].invalid && f['name'].touched}"
+            >
+            <div *ngIf="f['name'].invalid && f['name'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['name'].errors?.['required']">Name is required</div>
+            </div>
+          </div>
+          
+          <!-- Email Field (Optional) -->
+          <div class="col-span-1">
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              placeholder="Enter User Email"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            >
+          </div>
+          
+          <!-- Contact Field -->
+          <div class="col-span-1">
+            <label for="contact" class="block text-sm font-medium text-gray-700">Contact *</label>
+            <input 
+              type="text" 
+              id="contact" 
+              formControlName="contact" 
+              placeholder="Enter contact"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['contact'].invalid && f['contact'].touched}"
+            >
+            <div *ngIf="f['contact'].invalid && f['contact'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['contact'].errors?.['required']">Contact is required</div>
+              <div *ngIf="f['contact'].errors?.['pattern']">Contact must be a 10-digit number</div>
+            </div>
+          </div>
+          
+          <!-- Branch Field -->
+          <div class="col-span-1">
+            <label for="branch" class="block text-sm font-medium text-gray-700">Branch *</label>
+            <select 
+              id="branch" 
+              formControlName="branch" 
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['branch'].invalid && f['branch'].touched}"
+            >
+              <option value="" disabled selected>Select Branch</option>
+              <option *ngFor="let branch of branches" [value]="branch.Branch">{{ branch.Branch }}</option>
+            </select>
+            <div *ngIf="f['branch'].invalid && f['branch'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['branch'].errors?.['required']">Branch is required</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Form Buttons -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <app-button 
+            *ngIf="isEditing"
+            type="button" 
+            variant="secondary"
+            (click)="cancelEdit()">
+            Cancel
+          </app-button>
+          
+          <app-button 
+            type="button" 
+            variant="secondary"
+            (click)="clearForm()">
+            Clear
+          </app-button>
+          
+          <app-button 
+            type="submit" 
+            variant="primary"
+            size="lg"
+            [loading]="submitting" 
+            [disabled]="engineerForm.invalid || submitting">
+            {{ isEditing ? 'Update' : 'Submit' }}
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- Engineers Table -->
+  <div class="engineer-table-container">
+    <app-card title="Report Engineers" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="!loading && engineers.length === 0" class="text-center py-8 text-gray-500">
+        No report engineers found
+      </div>
+      
+      <!-- Table -->
+      <div *ngIf="!loading && engineers.length > 0" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let engineer of paginatedEngineers">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ engineer.VEName }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ engineer.VEEmail || '-' }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ engineer.VEContact }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ engineer.VEBranch }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex space-x-2">
+                  <button 
+                    (click)="editEngineer(engineer)" 
+                    class="text-blue-600 hover:text-blue-900"
+                    title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button 
+                    (click)="deleteEngineer(engineer.VID!)" 
+                    class="text-red-600 hover:text-red-900"
+                    title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+          <div class="flex-1 flex justify-between items-center sm:hidden">
+            <button 
+              (click)="changePage(currentPage - 1)" 
+              [disabled]="currentPage === 1"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Previous
+            </button>
+            <span class="text-sm text-gray-700">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+            <button 
+              (click)="changePage(currentPage + 1)" 
+              [disabled]="currentPage === totalPages"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Next
+            </button>
+          </div>
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing
+                <span class="font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span>
+                to
+                <span class="font-medium">{{ (currentPage * pageSize > totalItems) ? totalItems : currentPage * pageSize }}</span>
+                of
+                <span class="font-medium">{{ totalItems }}</span>
+                results
+              </p>
+            </div>
+            <div>
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <!-- First Page Button -->
+                <button 
+                  *ngIf="showFirstPage"
+                  (click)="changePage(1)" 
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">First</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                
+                <!-- Previous Button -->
+                <button 
+                  (click)="changePage(currentPage - 1)" 
+                  [disabled]="currentPage === 1"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+                  class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Previous</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                
+                <!-- Page Numbers -->
+                <button 
+                  *ngFor="let page of pages" 
+                  (click)="changePage(page)" 
+                  [ngClass]="{'bg-blue-50 border-blue-500 text-blue-600': page === currentPage, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': page !== currentPage}"
+                  class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                  {{ page }}
+                </button>
+                
+                <!-- Next Button -->
+                <button 
+                  (click)="changePage(currentPage + 1)" 
+                  [disabled]="currentPage === totalPages"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+                  class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Next</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                
+                <!-- Last Page Button -->
+                <button 
+                  *ngIf="showLastPage"
+                  (click)="changePage(totalPages)" 
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Last</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L8.586 10 4.293 14.293a1 1 0 000 1.414zm6 0a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L15.586 10l-4.293 4.293a1 1 0 000 1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>

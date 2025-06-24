@@ -1,0 +1,27 @@
+.sidebar {
+  @apply h-full bg-gray-800 text-white transition-all duration-300 ease-in-out;
+  
+  &.collapsed {
+    @apply w-16;
+    
+    .menu-item-text {
+      @apply hidden;
+    }
+    
+    .menu-item {
+      @apply justify-center;
+    }
+  }
+  
+  .menu-item {
+    @apply flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200;
+    
+    &.active {
+      @apply bg-gray-700 text-white;
+    }
+    
+    svg {
+      @apply w-5 h-5 mr-3;
+    }
+  }
+}

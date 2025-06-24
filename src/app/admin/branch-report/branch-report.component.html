@@ -1,0 +1,117 @@
+<div class="container-custom py-6">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">All Branch Report</h1>
+    <p class="mt-2 text-gray-600">View branch reports by date range</p>
+  </div>
+
+  <!-- Success and Error Messages -->
+  <div class="max-w-7xl mx-auto mb-6">
+    <app-alert *ngIf="success" type="success" [message]="success" (dismissed)="success = ''"></app-alert>
+    <app-alert *ngIf="error" type="error" [message]="error" (dismissed)="error = ''"></app-alert>
+  </div>
+
+  <!-- Report Form -->
+  <div class="mt-6  mx-auto">
+    <app-card title="Select Date Range" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+        <!-- Form Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- From Date Field -->
+          <div>
+            <label for="fromDate" class="block text-sm font-medium text-gray-700">Select From Date</label>
+            <input
+              type="date"
+              id="fromDate"
+              formControlName="fromDate"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['fromDate'].invalid && f['fromDate'].touched}"
+            >
+            <div *ngIf="f['fromDate'].invalid && f['fromDate'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['fromDate'].errors?.['required']">From Date is required</div>
+            </div>
+          </div>
+
+          <!-- To Date Field -->
+          <div>
+            <label for="toDate" class="block text-sm font-medium text-gray-700">Select To Date</label>
+            <input
+              type="date"
+              id="toDate"
+              formControlName="toDate"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['toDate'].invalid && f['toDate'].touched}"
+            >
+            <div *ngIf="f['toDate'].invalid && f['toDate'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['toDate'].errors?.['required']">To Date is required</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <app-button
+            type="button"
+            variant="secondary"
+            (click)="clearForm()">
+            Clear
+          </app-button>
+
+          <app-button
+            type="submit"
+            variant="primary"
+            size="lg"
+            [loading]="submitting"
+            [disabled]="reportForm.invalid || submitting">
+            Submit
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- Report Results -->
+  <div *ngIf="branchReports.length > 0" class="mt-10 max-w-full mx-auto overflow-hidden">
+    <app-card title="Branch Report Results" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+
+      <!-- Report Table -->
+      <div *ngIf="!loading" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cases</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Sent</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit done Document pending</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Initiation</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report in process</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Pending</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reject Without Visit</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rejected After Visit</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Pending</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Others</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let report of branchReports">
+              <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ report.Branch }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.NoOfInitiations }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.ReportSentCount }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.VisitDoneCount }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.StartedInitiationCount }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.Reportinprocess }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.ReportPendingCount }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.RejectWithoutVisit }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.RejectAfterVisit }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.VisitPendingCount }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ report.Others }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

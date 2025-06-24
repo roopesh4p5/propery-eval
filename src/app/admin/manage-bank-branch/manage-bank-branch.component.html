@@ -1,0 +1,492 @@
+<div class="container-custom py-6">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Manage Bank Branch</h1>
+    <p class="mt-2 text-gray-600">Add and manage bank branch information</p>
+  </div>
+
+  <!-- Success and Error Messages -->
+  <div class="max-w-7xl mx-auto mb-6">
+    <app-alert *ngIf="success" type="success" [message]="success" (dismissed)="success = ''"></app-alert>
+    <app-alert *ngIf="error" type="error" [message]="error" (dismissed)="error = ''"></app-alert>
+  </div>
+
+  <!-- Bank Branch Form -->
+  <div class="mt-6 max-w-7xl mx-auto bank-branch-form-container">
+    <app-card [title]="editMode ? 'Update Bank Branch' : 'Add Bank Branch'" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <form [formGroup]="bankBranchForm" (ngSubmit)="onSubmit()">
+        <!-- Form Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Branch Field -->
+          <div>
+            <label for="branch" class="block text-sm font-medium text-gray-700">Assigner Branch *</label>
+            <select
+              id="branch"
+              formControlName="branch"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['branch'].invalid && f['branch'].touched}"
+            >
+              <option value="" disabled selected>Select Branch</option>
+              <option *ngFor="let branch of branches" [value]="branch.Branch">{{ branch.Branch }}</option>
+            </select>
+            <div *ngIf="f['branch'].invalid && f['branch'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['branch'].errors?.['required']">Branch is required</div>
+            </div>
+          </div>
+
+          <!-- Bank Field -->
+          <div>
+            <label for="bank" class="block text-sm font-medium text-gray-700">Assigner Bank *</label>
+            <input
+              type="text"
+              id="bank"
+              formControlName="bank"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter BANK"
+              [ngClass]="{'border-red-500': f['bank'].invalid && f['bank'].touched}"
+            >
+            <div *ngIf="f['bank'].invalid && f['bank'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['bank'].errors?.['required']">Bank is required</div>
+            </div>
+          </div>
+
+          <!-- State Field -->
+          <div>
+            <label for="state" class="block text-sm font-medium text-gray-700">State *</label>
+            <select
+              id="state"
+              formControlName="state"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['state'].invalid && f['state'].touched}"
+            >
+              <option value="" disabled selected>Select State</option>
+              <option *ngFor="let state of states" [value]="state">{{ state }}</option>
+            </select>
+            <div *ngIf="f['state'].invalid && f['state'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['state'].errors?.['required']">State is required</div>
+            </div>
+          </div>
+
+          <!-- Bill Name Field -->
+          <div>
+            <label for="billName" class="block text-sm font-medium text-gray-700">Bill Name *</label>
+            <input
+              type="text"
+              id="billName"
+              formControlName="billName"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter Name"
+              [ngClass]="{'border-red-500': f['billName'].invalid && f['billName'].touched}"
+            >
+            <div *ngIf="f['billName'].invalid && f['billName'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['billName'].errors?.['required']">Bill Name is required</div>
+            </div>
+          </div>
+
+          <!-- Account Field -->
+          <div>
+            <label for="billAcc" class="block text-sm font-medium text-gray-700">Account *</label>
+            <input
+              type="text"
+              id="billAcc"
+              formControlName="billAcc"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter Account"
+              [ngClass]="{'border-red-500': f['billAcc'].invalid && f['billAcc'].touched}"
+            >
+            <div *ngIf="f['billAcc'].invalid && f['billAcc'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['billAcc'].errors?.['required']">Account is required</div>
+            </div>
+          </div>
+
+          <!-- IFSC Field -->
+          <div>
+            <label for="billIFSC" class="block text-sm font-medium text-gray-700">IFSC *</label>
+            <input
+              type="text"
+              id="billIFSC"
+              formControlName="billIFSC"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter IFSC"
+              [ngClass]="{'border-red-500': f['billIFSC'].invalid && f['billIFSC'].touched}"
+            >
+            <div *ngIf="f['billIFSC'].invalid && f['billIFSC'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['billIFSC'].errors?.['required']">IFSC is required</div>
+            </div>
+          </div>
+
+          <!-- PAN Field -->
+          <div>
+            <label for="bPAN" class="block text-sm font-medium text-gray-700">PAN *</label>
+            <input
+              type="text"
+              id="bPAN"
+              formControlName="bPAN"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter PAN"
+              [ngClass]="{'border-red-500': f['bPAN'].invalid && f['bPAN'].touched}"
+            >
+            <div *ngIf="f['bPAN'].invalid && f['bPAN'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['bPAN'].errors?.['required']">PAN is required</div>
+            </div>
+          </div>
+
+          <!-- GSTIN Field -->
+          <div>
+            <label for="bGSTIN" class="block text-sm font-medium text-gray-700">GSTIN *</label>
+            <input
+              type="text"
+              id="bGSTIN"
+              formControlName="bGSTIN"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter GSTIN"
+              [ngClass]="{'border-red-500': f['bGSTIN'].invalid && f['bGSTIN'].touched}"
+            >
+            <div *ngIf="f['bGSTIN'].invalid && f['bGSTIN'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['bGSTIN'].errors?.['required']">GSTIN is required</div>
+            </div>
+          </div>
+
+          <!-- Our Bank Field -->
+          <div>
+            <label for="ourBank" class="block text-sm font-medium text-gray-700">Our Bank *</label>
+            <input
+              type="text"
+              id="ourBank"
+              formControlName="ourBank"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter Bank"
+              [ngClass]="{'border-red-500': f['ourBank'].invalid && f['ourBank'].touched}"
+            >
+            <div *ngIf="f['ourBank'].invalid && f['ourBank'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['ourBank'].errors?.['required']">Our Bank is required</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- From Details Section -->
+        <div class="mt-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">From Details</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- From Name Field -->
+            <div>
+              <label for="fromName" class="block text-sm font-medium text-gray-700">Name *</label>
+              <input
+                type="text"
+                id="fromName"
+                formControlName="fromName"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Name"
+                [ngClass]="{'border-red-500': f['fromName'].invalid && f['fromName'].touched}"
+              >
+              <div *ngIf="f['fromName'].invalid && f['fromName'].touched" class="text-red-500 text-xs mt-1">
+                <div *ngIf="f['fromName'].errors?.['required']">Name is required</div>
+              </div>
+            </div>
+
+            <!-- Email Field -->
+            <div>
+              <label for="bEmail" class="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                id="bEmail"
+                formControlName="bEmail"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Email"
+                [ngClass]="{'border-red-500': f['bEmail'].invalid && f['bEmail'].touched}"
+              >
+              <div *ngIf="f['bEmail'].invalid && f['bEmail'].touched" class="text-red-500 text-xs mt-1">
+                <div *ngIf="f['bEmail'].errors?.['email']">Please enter a valid email</div>
+              </div>
+            </div>
+
+            <!-- Mobile Field -->
+            <div>
+              <label for="bMobile" class="block text-sm font-medium text-gray-700">Mobile</label>
+              <input
+                type="text"
+                id="bMobile"
+                formControlName="bMobile"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Mobile Number"
+                [ngClass]="{'border-red-500': f['bMobile'].invalid && f['bMobile'].touched}"
+              >
+              <div *ngIf="f['bMobile'].invalid && f['bMobile'].touched" class="text-red-500 text-xs mt-1">
+                <div *ngIf="f['bMobile'].errors?.['pattern']">Please enter a valid 10-digit mobile number</div>
+              </div>
+            </div>
+
+            <!-- Address Field -->
+            <div>
+              <label for="bAddress" class="block text-sm font-medium text-gray-700">Address</label>
+              <textarea
+                id="bAddress"
+                formControlName="bAddress"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Address"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <!-- From GSTIN Field -->
+            <div>
+              <label for="fromGSTIN" class="block text-sm font-medium text-gray-700">GSTIN</label>
+              <input
+                type="text"
+                id="fromGSTIN"
+                formControlName="fromGSTIN"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter GSTIN"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- To Details Section -->
+        <div class="mt-8">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">To Details</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- To Name Field -->
+            <div>
+              <label for="toName" class="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                type="text"
+                id="toName"
+                formControlName="toName"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Name"
+              >
+            </div>
+
+            <!-- To Email Field -->
+            <div>
+              <label for="toEmail" class="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                id="toEmail"
+                formControlName="toEmail"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Email"
+                [ngClass]="{'border-red-500': f['toEmail'].invalid && f['toEmail'].touched}"
+              >
+              <div *ngIf="f['toEmail'].invalid && f['toEmail'].touched" class="text-red-500 text-xs mt-1">
+                <div *ngIf="f['toEmail'].errors?.['email']">Please enter a valid email</div>
+              </div>
+            </div>
+
+            <!-- To Mobile Field -->
+            <div>
+              <label for="toMobile" class="block text-sm font-medium text-gray-700">Mobile</label>
+              <input
+                type="text"
+                id="toMobile"
+                formControlName="toMobile"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Mobile Number"
+                [ngClass]="{'border-red-500': f['toMobile'].invalid && f['toMobile'].touched}"
+              >
+              <div *ngIf="f['toMobile'].invalid && f['toMobile'].touched" class="text-red-500 text-xs mt-1">
+                <div *ngIf="f['toMobile'].errors?.['pattern']">Please enter a valid 10-digit mobile number</div>
+              </div>
+            </div>
+
+            <!-- To Address Field -->
+            <div>
+              <label for="toAddress" class="block text-sm font-medium text-gray-700">Address</label>
+              <textarea
+                id="toAddress"
+                formControlName="toAddress"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter Address"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <!-- To GSTIN Field -->
+            <div>
+              <label for="toGSTIN" class="block text-sm font-medium text-gray-700">GSTIN</label>
+              <input
+                type="text"
+                id="toGSTIN"
+                formControlName="toGSTIN"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Enter GSTIN"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <app-button
+            *ngIf="editMode"
+            type="button"
+            variant="secondary"
+            (click)="cancelEdit()">
+            Cancel
+          </app-button>
+
+          <app-button
+            type="submit"
+            variant="primary"
+            size="lg"
+            [loading]="submitting"
+            [disabled]="bankBranchForm.invalid || submitting">
+            {{ editMode ? 'Update' : 'Submit' }}
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- Bank Branch Info Table -->
+  <div class="mt-10 max-w-full mx-auto overflow-hidden">
+    <app-card title="Bank Branch Information" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && bankBranchInfoList.length === 0" class="text-center py-8">
+        <p class="text-gray-500">No bank branch information found</p>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!loading && bankBranchInfoList.length > 0" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigner Branch</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigner Bank</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Name</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account No</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IFSC</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PAN No</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">GST No</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Our Branch</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From Name</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From Email</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From Mobile</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From Address</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From GSTIN</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To Name</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To Email</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To Mobile</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To Address</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To GSTIN</th>
+              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let item of paginatedItems">
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Branch }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Bank }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BState }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BillName }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BillAcc }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BillIFSC }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BPAN }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BGSTIN }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Our_Bank }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.From_Name }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BEmail }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BMobile }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.BAddress }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.From_GSTIN }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.To_Name }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.To_Email }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.To_Mobile }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.To_Address }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.To_GSTIN }}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex space-x-2">
+                  <button
+                    (click)="editBankBranchInfo(item)"
+                    class="text-blue-600 hover:text-blue-900"
+                    title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    (click)="deleteBankBranchInfo(item.BBID || 0)"
+                    class="text-red-600 hover:text-red-900"
+                    title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+          <div class="flex-1 flex justify-between sm:hidden">
+            <button
+              (click)="changePage(currentPage - 1)"
+              [disabled]="currentPage === 1"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Previous
+            </button>
+            <button
+              (click)="changePage(currentPage + 1)"
+              [disabled]="currentPage === totalPages"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Next
+            </button>
+          </div>
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing
+                <span class="font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span>
+                to
+                <span class="font-medium">{{ (currentPage * pageSize > totalItems) ? totalItems : currentPage * pageSize }}</span>
+                of
+                <span class="font-medium">{{ totalItems }}</span>
+                results
+              </p>
+            </div>
+            <div>
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button
+                  (click)="changePage(currentPage - 1)"
+                  [disabled]="currentPage === 1"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Previous</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <button
+                  *ngFor="let page of pages"
+                  (click)="changePage(page)"
+                  [ngClass]="{'bg-blue-50 border-blue-500 text-blue-600': page === currentPage, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': page !== currentPage}"
+                  class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                  {{ page }}
+                </button>
+                <button
+                  (click)="changePage(currentPage + 1)"
+                  [disabled]="currentPage === totalPages"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Next</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<ng-container *ngIf="!fullScreen && !overlay">
+  <div class="flex items-center justify-center">
+    <div [ngClass]="{
+      'w-5 h-5': size === 'sm',
+      'w-8 h-8': size === 'md',
+      'w-12 h-12': size === 'lg',
+      'border-blue-500': color === 'primary',
+      'border-gray-500': color === 'secondary',
+      'border-white': color === 'white'
+    }" class="animate-spin rounded-full border-t-2 border-b-2"></div>
+    <span *ngIf="text" class="ml-3">{{ text }}</span>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="overlay">
+  <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+      <div [ngClass]="{
+        'w-5 h-5': size === 'sm',
+        'w-8 h-8': size === 'md',
+        'w-12 h-12': size === 'lg',
+        'border-blue-500': color === 'primary',
+        'border-gray-500': color === 'secondary',
+        'border-white': color === 'white'
+      }" class="animate-spin rounded-full border-t-2 border-b-2"></div>
+      <span *ngIf="text" class="mt-3 text-gray-700">{{ text }}</span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="fullScreen">
+  <div class="fixed inset-0 bg-white flex items-center justify-center z-50">
+    <div class="flex flex-col items-center">
+      <div [ngClass]="{
+        'w-5 h-5': size === 'sm',
+        'w-8 h-8': size === 'md',
+        'w-12 h-12': size === 'lg',
+        'border-blue-500': color === 'primary',
+        'border-gray-500': color === 'secondary',
+        'border-white': color === 'white'
+      }" class="animate-spin rounded-full border-t-2 border-b-2"></div>
+      <span *ngIf="text" class="mt-3 text-gray-700">{{ text }}</span>
+    </div>
+  </div>
+</ng-container>

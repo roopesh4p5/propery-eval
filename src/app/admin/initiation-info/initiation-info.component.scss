@@ -1,0 +1,38 @@
+.container-custom {
+  @apply max-w-full mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Custom styles for the table */
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Make table cells have a fixed width to prevent layout shifts */
+table th {
+  min-width: 120px;
+  @apply bg-gray-50 sticky top-0 z-10;
+}
+
+/* Ensure the action column is narrower */
+table th:first-child,
+table td:first-child {
+  min-width: 60px;
+  width: 60px;
+}
+
+/* Add horizontal scrolling for the table */
+.overflow-x-auto {
+  @apply -mx-4 sm:-mx-6 lg:-mx-8;
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+/* Ensure the table doesn't break the layout on small screens */
+@media (max-width: 640px) {
+  .overflow-x-auto {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

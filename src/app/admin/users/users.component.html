@@ -1,0 +1,286 @@
+<div class="container-custom py-6">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Manage Users</h1>
+    <p class="mt-2 text-gray-600">Add and manage system users</p>
+  </div>
+
+  <!-- Success and Error Messages -->
+  <div class=" mx-auto mb-6">
+    <app-alert *ngIf="success" type="success" [message]="success" (dismissed)="success = ''"></app-alert>
+    <app-alert *ngIf="error" type="error" [message]="error" (dismissed)="error = ''"></app-alert>
+  </div>
+
+  <!-- Add/Edit User Form -->
+  <div class="mt-6  user-form-container">
+    <app-card [title]="editMode ? 'Edit User' : 'Add User'" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <!-- Form Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Name Field -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Name *</label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter user Name"
+              [ngClass]="{'border-red-500': f['name'].invalid && f['name'].touched}"
+            >
+            <div *ngIf="f['name'].invalid && f['name'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['name'].errors?.['required']">Name is required</div>
+            </div>
+          </div>
+
+          <!-- Email Field -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter User Email"
+              [ngClass]="{'border-red-500': f['email'].invalid && f['email'].touched}"
+            >
+            <div *ngIf="f['email'].invalid && f['email'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['email'].errors?.['required']">Email is required</div>
+              <div *ngIf="f['email'].errors?.['email']">Please enter a valid email</div>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password *</label>
+            <input
+              type="password"
+              id="password"
+              formControlName="password"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Enter password"
+              [ngClass]="{'border-red-500': f['password'].invalid && f['password'].touched}"
+            >
+            <div *ngIf="f['password'].invalid && f['password'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['password'].errors?.['required']">Password is required</div>
+              <div *ngIf="f['password'].errors?.['minlength']">Password must be at least 8 characters</div>
+            </div>
+          </div>
+
+          <!-- User Role Field -->
+          <div>
+            <label for="userRole" class="block text-sm font-medium text-gray-700">User Role *</label>
+            <select
+              id="userRole"
+              formControlName="userRole"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['userRole'].invalid && f['userRole'].touched}"
+            >
+              <option value="" disabled selected>Select Role</option>
+              <option *ngFor="let role of userRoles" [value]="role.id">{{ role.name }}</option>
+            </select>
+            <div *ngIf="f['userRole'].invalid && f['userRole'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['userRole'].errors?.['required']">User Role is required</div>
+            </div>
+          </div>
+
+          <!-- Branch Field -->
+          <div>
+            <label for="branch" class="block text-sm font-medium text-gray-700">Branch *</label>
+            <select
+              id="branch"
+              formControlName="branch"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['branch'].invalid && f['branch'].touched}"
+            >
+              <option value="" disabled selected>Select Branch</option>
+              <option *ngFor="let branch of branches" [value]="branch.Branch">{{ branch.Branch }}</option>
+            </select>
+            <div *ngIf="loadingBranches" class="text-sm text-gray-500 mt-1">Loading branches...</div>
+            <div *ngIf="f['branch'].invalid && f['branch'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['branch'].errors?.['required']">Branch is required</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <app-button
+            *ngIf="editMode"
+            type="button"
+            variant="secondary"
+            (click)="cancelEdit()">
+            Cancel
+          </app-button>
+
+          <app-button
+            type="submit"
+            variant="primary"
+            size="lg"
+            [loading]="submitting"
+            [disabled]="userForm.invalid || submitting">
+            {{ editMode ? 'Update' : 'Submit' }}
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- User List -->
+  <div class="mt-10 max-w-7xl mx-auto">
+    <!-- Branch Filter -->
+    <div class="mb-6 flex items-end">
+      <div class="w-64">
+        <label for="branchFilter" class="block text-sm font-medium text-gray-700">Filter By Branch</label>
+        <select
+          id="branchFilter"
+          [(ngModel)]="selectedBranchFilter"
+          (change)="onBranchFilterChange(selectedBranchFilter)"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          <option value="">All Branches</option>
+          <option *ngFor="let branch of branches" [value]="branch.Branch">{{ branch.Branch }}</option>
+        </select>
+      </div>
+      <button
+        *ngIf="selectedBranchFilter"
+        (click)="onBranchFilterChange('')"
+        class="ml-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        Clear Filter
+      </button>
+    </div>
+
+    <app-card title="User List" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <!-- Loading State -->
+      <div *ngIf="loadingUsers" class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loadingUsers && filteredUsers.length === 0" class="text-center py-8">
+        <p class="text-gray-500">No users found</p>
+      </div>
+
+      <!-- User Table -->
+      <div *ngIf="!loadingUsers && filteredUsers.length > 0" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Role</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let user of paginatedUsers">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ user.Name }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-500">{{ user.Email }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800': user.UserRole === 'Admin',
+                    'bg-blue-100 text-blue-800': user.UserRole === 'Manager',
+                    'bg-yellow-100 text-yellow-800': user.UserRole === 'SubAdmin'
+                  }">
+                  {{ user.UserRole }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ user.Branch }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex space-x-2">
+                  <button
+                    (click)="editUser(user)"
+                    class="text-blue-600 hover:text-blue-900"
+                    title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    (click)="deleteUser(user.UserID)"
+                    class="text-red-600 hover:text-red-900"
+                    title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+          <div class="flex-1 flex justify-between sm:hidden">
+            <button
+              (click)="changePage(currentPage - 1)"
+              [disabled]="currentPage === 1"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Previous
+            </button>
+            <button
+              (click)="changePage(currentPage + 1)"
+              [disabled]="currentPage === totalPages"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+              Next
+            </button>
+          </div>
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing
+                <span class="font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span>
+                to
+                <span class="font-medium">{{ (currentPage * pageSize > totalUsers) ? totalUsers : currentPage * pageSize }}</span>
+                of
+                <span class="font-medium">{{ totalUsers }}</span>
+                results
+              </p>
+            </div>
+            <div>
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button
+                  (click)="changePage(currentPage - 1)"
+                  [disabled]="currentPage === 1"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Previous</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <button
+                  *ngFor="let page of pages"
+                  (click)="changePage(page)"
+                  [ngClass]="{'bg-blue-50 border-blue-500 text-blue-600': page === currentPage, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': page !== currentPage}"
+                  class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                  {{ page }}
+                </button>
+                <button
+                  (click)="changePage(currentPage + 1)"
+                  [disabled]="currentPage === totalPages"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">Next</span>
+                  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>

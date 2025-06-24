@@ -1,0 +1,353 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">Branch Wise Status Report</h1>
+  <p class="text-gray-600 mb-6">Branch (Based on User Login and Transactions Created under Login) Wise Report</p>
+
+  <!-- Alert Messages -->
+  <div *ngIf="success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+    <span class="block sm:inline">{{ success }}</span>
+    <span class="absolute top-0 bottom-0 right-0 px-4 py-3" (click)="success = ''">
+      <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <title>Close</title>
+        <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+      </svg>
+    </span>
+  </div>
+
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+    <span class="block sm:inline">{{ error }}</span>
+    <span class="absolute top-0 bottom-0 right-0 px-4 py-3" (click)="error = ''">
+      <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <title>Close</title>
+        <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+      </svg>
+    </span>
+  </div>
+
+  <!-- Filter Form -->
+  <div class="mb-8">
+    <app-card title="Filter Report" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Branch Field -->
+          <div class="col-span-1">
+            <label for="branch" class="block text-sm font-medium text-gray-700">Filter By Branch *</label>
+            <select
+              id="branch"
+              formControlName="branch"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['branch'].invalid && f['branch'].touched}"
+            >
+              <option value="" disabled selected>Select Branch</option>
+              <option *ngFor="let branch of branches" [value]="branch.Branch">{{ branch.Branch }}</option>
+            </select>
+            <div *ngIf="f['branch'].invalid && f['branch'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['branch'].errors?.['required']">Branch is required</div>
+            </div>
+          </div>
+
+          <!-- Month Field -->
+          <div class="col-span-1">
+            <label for="month" class="block text-sm font-medium text-gray-700">Select Month *</label>
+            <select
+              id="month"
+              formControlName="month"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['month'].invalid && f['month'].touched}"
+            >
+              <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
+            </select>
+            <div *ngIf="f['month'].invalid && f['month'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['month'].errors?.['required']">Month is required</div>
+            </div>
+          </div>
+
+          <!-- Year Field -->
+          <div class="col-span-1">
+            <label for="year" class="block text-sm font-medium text-gray-700">Select Year *</label>
+            <input
+              type="number"
+              id="year"
+              formControlName="year"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              [ngClass]="{'border-red-500': f['year'].invalid && f['year'].touched}"
+              min="2020"
+              max="2050"
+            >
+            <div *ngIf="f['year'].invalid && f['year'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['year'].errors?.['required']">Year is required</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <app-button
+            type="button"
+            variant="secondary"
+            (click)="clearForm()">
+            Clear
+          </app-button>
+
+          <app-button
+            type="submit"
+            variant="primary"
+            [loading]="submitting"
+            [disabled]="filterForm.invalid || submitting">
+            Generate Report
+          </app-button>
+        </div>
+      </form>
+    </app-card>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+
+  <!-- Report Results -->
+  <div *ngIf="!loading && (branchSummary || visitTeamStats.length > 0 || reportTeamStats.length > 0 || cashDetails.length > 0 || performaInvoiceDetails.length > 0 || regularInvoiceDetails.length > 0)" class="space-y-8">
+    <h2 class="text-xl font-bold text-center text-gray-800 mt-8 mb-4">
+      {{ selectedBranch }} Branch Income & Expenditure details for the month of {{ selectedMonth }} {{ selectedYear }}
+    </h2>
+
+    <!-- Branch Summary Table -->
+    <app-card *ngIf="branchSummary" title="TOTAL CASES" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Count</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ selectedBranch }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"></td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Total Cases</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.NoOfInitiations || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Report Sent</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.ReportSentCount || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Visit done Document Pending</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.VisitDoneCount || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Start Initiation</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.StartedInitiationCount || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Report in Progress</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.Reportinprocess || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">7</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Document Pending</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.DocumentPending || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Reject Without Visit</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.RejectWithoutVisit || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">9</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Reject After Visit</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.RejectAfterVisit || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Visit Pending</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.VisitPendingCount || 0 }}</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">11</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Others</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ branchSummary.Others || 0 }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+
+    <!-- Visit Team Table -->
+    <app-card *ngIf="visitTeamStats.length > 0" title="VISIT TEAM" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">VISITING PERSON NAME</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL CASES VISITED</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let member of visitTeamStats; let i = index">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ i + 1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ member.EmpName }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ member.Counter }}</td>
+            </tr>
+            <tr *ngIf="visitTeamStats.length === 0">
+              <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No visit team data available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+
+    <!-- Report Team Table -->
+    <app-card *ngIf="reportTeamStats.length > 0" title="REPORT TEAM" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">REPORT TEAM DETAILS</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL NO OF REPORT PREPARED</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let member of reportTeamStats; let i = index">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ i + 1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ member.VisitEngineer }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ member.Counter }}</td>
+            </tr>
+            <tr *ngIf="reportTeamStats.length === 0">
+              <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No report team data available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+
+    <!-- Cash/GPay Details Table -->
+    <app-card *ngIf="cashDetails.length > 0" title="Cash/Gpay Details" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank/Customer Name</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Raised Date</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount Without GST</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount With GST</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client GSTIN</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let item of cashDetails; let i = index">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ i + 1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Bank }} / {{ item.CustName }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Branch }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.InvoiceDate }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.InvoiceNo }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.AmountWithoutGST }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.AmountWithGST }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Pay_Status }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Client_GSTIN }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Remarks }}</td>
+            </tr>
+            <tr *ngIf="cashDetails.length === 0">
+              <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No cash/GPay details available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+
+    <!-- Performa Invoice Details Table -->
+    <app-card *ngIf="performaInvoiceDetails.length > 0" title="Performa Invoice Details" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank/Customer Name</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Raised Date</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount Without GST</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount With GST</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client GSTIN</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let item of performaInvoiceDetails; let i = index">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ i + 1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Bank }} / {{ item.CustName }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Branch }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.InvoiceDate }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.InvoiceNo }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.AmountWithoutGST }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.AmountWithGST }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Pay_Status }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Client_GSTIN }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Remarks }}</td>
+            </tr>
+            <tr *ngIf="performaInvoiceDetails.length === 0">
+              <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No performa invoice details available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+
+    <!-- Regular Invoice Details Table -->
+    <app-card *ngIf="regularInvoiceDetails.length > 0" title="Regular Invoice Details" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank/Customer Name</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Raised Date</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount Without GST</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount With GST</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client GSTIN</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let item of regularInvoiceDetails; let i = index">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ i + 1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Bank }} / {{ item.CustName }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Branch }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.InvoiceDate }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.InvoiceNo }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.AmountWithoutGST }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.AmountWithGST }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Pay_Status }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Client_GSTIN }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.Remarks }}</td>
+            </tr>
+            <tr *ngIf="regularInvoiceDetails.length === 0">
+              <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No regular invoice details available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+</div>

@@ -87,7 +87,7 @@ export class BranchReportComponent implements OnInit {
     const formValues = this.reportForm.value;
     const branch = 'ALL'; // Always use 'ALL' for branch
 
-    this.reportService.getBranchReport(branch, fromDate, toDate)
+    this.reportService.getBranchReport(branch, formValues.fromDate, formValues.toDate)
       .pipe(
         finalize(() => this.submitting = false)
       )
@@ -109,6 +109,12 @@ export class BranchReportComponent implements OnInit {
 
   // Helper method to format date for display (DD/MM/YYYY)
   formatDateForDisplay(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 
   clearForm(): void {

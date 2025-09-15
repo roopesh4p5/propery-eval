@@ -80,6 +80,26 @@ const routes: Routes = [
     path: 'bank-wise-report',
     loadComponent: () => import('./bank-wise-report/bank-wise-report.component').then(c => c.BankWiseReportComponent),
     canActivate: [AdminGuard]
+  },
+  {
+    path: 'visit-pending-engineer-wise',
+    loadComponent: () => import('./visit-pending-engineer-wise/visit-pending-engineer-wise.component').then(c => c.VisitPendingEngineerWiseComponent),
+    canActivate: [AdminGuard]
+  },
+  {
+    path: 'mourya-branch-report',
+    loadComponent: () => import('./mourya-branch-report/mourya-branch-report.component').then(c => c.MouryaBranchReportComponent),
+    canActivate: [AdminGuard]
+  },
+  {
+    path: 'visit-pending-bank-wise',
+    loadComponent: () => import('./visit-pending-bank-wise/visit-pending-bank-wise.component').then(c => c.VisitPendingBankWiseComponent),
+    canActivate: [AdminGuard]
+  },
+  {
+    path: 'reports-status',
+    loadComponent: () => import('./reports-status/reports-status.component').then(c => c.ReportsStatusComponent),
+    canActivate: [AdminGuard]
   }
 ];
 

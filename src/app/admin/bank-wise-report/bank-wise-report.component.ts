@@ -57,6 +57,21 @@ export class BankWiseReportComponent implements OnInit {
     { value: '12', label: 'December' }
   ];
 
+  // Available years for dropdown
+  years = [
+    { value: '2020', label: '2020' },
+    { value: '2021', label: '2021' },
+    { value: '2022', label: '2022' },
+    { value: '2023', label: '2023' },
+    { value: '2024', label: '2024' },
+    { value: '2025', label: '2025' },
+    { value: '2026', label: '2026' },
+    { value: '2027', label: '2027' },
+    { value: '2028', label: '2028' },
+    { value: '2029', label: '2029' },
+    { value: '2030', label: '2030' }
+  ];
+
   constructor(
     private formBuilder: FormBuilder,
     private bankReportService: BankReportService,
@@ -71,14 +86,12 @@ export class BankWiseReportComponent implements OnInit {
 
   initForm(): void {
     const currentDate = new Date();
-    const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const currentYear = currentDate.getFullYear().toString();
+    const currentMonth = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`;
 
     this.filterForm = this.formBuilder.group({
       bank: ['', [Validators.required]],
       branch: ['', [Validators.required]],
-      month: [currentMonth, [Validators.required]],
-      year: [currentYear, [Validators.required]]
+      monthYear: [currentMonth, [Validators.required]]
     });
 
     // Watch for bank changes to load branches
@@ -144,16 +157,19 @@ export class BankWiseReportComponent implements OnInit {
     const formValues = this.filterForm.value;
     this.selectedBank = formValues.bank;
     this.selectedBranch = formValues.branch;
-    this.selectedMonth = this.getMonthName(formValues.month);
-    this.selectedYear = formValues.year;
+
+    // Parse the month-year value (format: "2024-09")
+    const [year, month] = formValues.monthYear.split('-');
+    this.selectedMonth = this.getMonthName(month);
+    this.selectedYear = year;
 
     // Calculate date range for the selected month
     // First day of the month at 00:00:00
-    const fromDate = new Date(parseInt(formValues.year), parseInt(formValues.month) - 1, 1);
+    const fromDate = new Date(parseInt(year), parseInt(month) - 1, 1);
     fromDate.setHours(0, 0, 0, 0);
 
     // Last day of the month at 23:59:59
-    const toDate = new Date(parseInt(formValues.year), parseInt(formValues.month), 0);
+    const toDate = new Date(parseInt(year), parseInt(month), 0);
     toDate.setHours(23, 59, 59, 999);
 
     // Convert to ISO string format as expected by the API
@@ -163,8 +179,7 @@ export class BankWiseReportComponent implements OnInit {
     console.log('Date range for API calls:', {
       bank: formValues.bank,
       branch: formValues.branch,
-      month: formValues.month,
-      year: formValues.year,
+      monthYear: formValues.monthYear,
       fromDate: fromDateStr,
       toDate: toDateStr
     });

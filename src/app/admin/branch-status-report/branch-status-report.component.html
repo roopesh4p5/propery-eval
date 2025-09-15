@@ -45,36 +45,18 @@
             </div>
           </div>
 
-          <!-- Month Field -->
+          <!-- Month/Year Field -->
           <div class="col-span-1">
-            <label for="month" class="block text-sm font-medium text-gray-700">Select Month *</label>
-            <select
-              id="month"
-              formControlName="month"
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              [ngClass]="{'border-red-500': f['month'].invalid && f['month'].touched}"
-            >
-              <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
-            </select>
-            <div *ngIf="f['month'].invalid && f['month'].touched" class="text-red-500 text-xs mt-1">
-              <div *ngIf="f['month'].errors?.['required']">Month is required</div>
-            </div>
-          </div>
-
-          <!-- Year Field -->
-          <div class="col-span-1">
-            <label for="year" class="block text-sm font-medium text-gray-700">Select Year *</label>
+            <label for="monthYear" class="block text-sm font-medium text-gray-700">Select Month & Year *</label>
             <input
-              type="number"
-              id="year"
-              formControlName="year"
+              type="month"
+              id="monthYear"
+              formControlName="monthYear"
               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              [ngClass]="{'border-red-500': f['year'].invalid && f['year'].touched}"
-              min="2020"
-              max="2050"
+              [ngClass]="{'border-red-500': f['monthYear'].invalid && f['monthYear'].touched}"
             >
-            <div *ngIf="f['year'].invalid && f['year'].touched" class="text-red-500 text-xs mt-1">
-              <div *ngIf="f['year'].errors?.['required']">Year is required</div>
+            <div *ngIf="f['monthYear'].invalid && f['monthYear'].touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="f['monthYear'].errors?.['required']">Month & Year is required</div>
             </div>
           </div>
         </div>

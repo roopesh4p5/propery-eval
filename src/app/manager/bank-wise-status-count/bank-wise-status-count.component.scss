@@ -1,0 +1,31 @@
+// Prevent blur and shadow issues on small screens
+.container,
+.w-full {
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+
+// Ensure proper table display on small screens
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+// Remove any potential dark overlays
+* {
+  box-shadow: none !important;
+}
+
+// Ensure cards don't have dark shadows on mobile
+app-card {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+// Prevent text blur on small screens
+@media (max-width: 768px) {
+  * {
+    text-shadow: none !important;
+    -webkit-font-smoothing: auto !important;
+    -moz-osx-font-smoothing: auto !important;
+  }
+}

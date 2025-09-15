@@ -1,0 +1,461 @@
+
+
+
+<div class="container-custom py-6">
+	<div class="text-center mb-8">
+		<h1 class="text-3xl font-bold text-gray-900">Start Initiation Info</h1>
+		<p class="mt-2 text-gray-600">Add and manage initiation details</p>
+	</div>
+
+	<div class="mt-6 start-initiation-form-container">
+		<app-card [title]="editMode ? 'Edit Initiation Info' : 'Start Initiation Info'" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+			<form [formGroup]="initiationForm" (ngSubmit)="onSubmit()">
+				<!-- Site Engineer Section -->
+				<div class="mb-8">
+					<h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Site Engineer Details</h3>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<!-- Site Engineer Email Dropdown -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Site Engineer Email *</label>
+							<select formControlName="empEmail" (change)="onSiteEngineerChange($any($event.target).value)" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+								<option value="" disabled selected>Select Site Engineer Email</option>
+								<option *ngFor="let engineer of siteEngineers" [value]="engineer.EmpEmail">{{ engineer.EmpEmail }}</option>
+							</select>
+							<span *ngIf="shouldShowError('empEmail')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('empEmail') }}
+							</span>
+						</div>
+						<!-- Site Engineer Name -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Site Engineer Name *</label>
+							<input type="text" formControlName="empName" placeholder="Enter Site Engineer Name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('empName')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('empName') }}
+							</span>
+						</div>
+						<!-- Site Engineer Number -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Site Engineer Number *</label>
+							<input type="text" formControlName="empContact" placeholder="Enter Site Engineer Number" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('empContact')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('empContact') }}
+							</span>
+						</div>
+						<!-- Site Engineer Branch -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Site Engineer Branch *</label>
+							<input type="text" formControlName="assignerBranch" placeholder="Enter Site Engineer Branch" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('assignerBranch')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('assignerBranch') }}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Initiation Engineer Section -->
+				<div class="mb-8">
+					<h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Initiation Engineer Details</h3>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<!-- Initiation Engineer Email Dropdown -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Initiation Engineer Email *</label>
+							<select formControlName="inEmail" (change)="onInitiationEngineerChange($any($event.target).value)" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+								<option value="" disabled selected>Select Initiation Engineer Email</option>
+								<option *ngFor="let engineer of initiationEngineers" [value]="engineer.InEmail">{{ engineer.InEmail }}</option>
+							</select>
+							<span *ngIf="shouldShowError('inEmail')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('inEmail') }}
+							</span>
+						</div>
+						<!-- Initiation Engineer Name -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Initiation Engineer Name *</label>
+							<input type="text" formControlName="inName" placeholder="Enter Initiation Engineer Name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('inName')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('inName') }}
+							</span>
+						</div>
+						<!-- Initiation Engineer Number -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Initiation Engineer Number *</label>
+							<input type="text" formControlName="inContact" placeholder="Enter Initiation Engineer Number" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('inContact')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('inContact') }}
+							</span>
+						</div>
+						<!-- Initiation Engineer Branch -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Initiation Engineer Branch *</label>
+							<input type="text" formControlName="inBranch" placeholder="Enter Initiation Engineer Branch" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('inBranch')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('inBranch') }}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Customer, Contact & Bank Details Section -->
+				<div class="mb-8">
+					<h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Customer, Contact & Bank Details</h3>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<!-- Contact Person Name -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Contact Person Name *</label>
+							<input type="text" formControlName="contactName" placeholder="Contact Person Name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('contactName')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('contactName') }}
+							</span>
+						</div>
+						<!-- Contact Person Number -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Contact Person Number</label>
+							<input type="text" formControlName="contactNumber" placeholder="Contact Mobile" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('contactNumber')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('contactNumber') }}
+							</span>
+						</div>
+						<!-- Customer Name -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Customer Name *</label>
+							<input type="text" formControlName="custName" placeholder="Enter user Name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('custName')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('custName') }}
+							</span>
+						</div>
+						<!-- Customer Mobile -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Customer Mobile *</label>
+							<input type="text" formControlName="custMobile" placeholder="Contact Mobile" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('custMobile')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('custMobile') }}
+							</span>
+						</div>
+						<!-- Customer Email -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Customer Email</label>
+							<input type="email" formControlName="custEmail" placeholder="Customer Email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('custEmail')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('custEmail') }}
+							</span>
+						</div>
+						<!-- Map Link -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Map Link (Geo-location)</label>
+							<input type="text" formControlName="mapLink" placeholder="Enter Map Link" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('mapLink')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('mapLink') }}
+							</span>
+						</div>
+						<!-- Date of Request -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Date of Request *</label>
+							<input type="date" formControlName="dateOfRequest" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('dateOfRequest')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('dateOfRequest') }}
+							</span>
+						</div>
+						<!-- Bank Dropdown -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Bank *</label>
+							<select formControlName="bank" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+								<option value="" disabled selected>Select Bank</option>
+								<option *ngFor="let bank of banks" [value]="bank.Bank">{{ bank.Bank }}</option>
+							</select>
+							<span *ngIf="shouldShowError('bank')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('bank') }}
+							</span>
+						</div>
+						<!-- Mourya Branch Dropdown -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Mourya Branch *</label>
+							<select formControlName="branch" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+								<option value="" disabled selected>Select Branch</option>
+								<option *ngFor="let branch of mouryaBranches" [value]="branch.Branch">{{ branch.Branch }}</option>
+							</select>
+							<span *ngIf="shouldShowError('branch')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('branch') }}
+							</span>
+						</div>
+						<!-- Client Branch -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Client branch *</label>
+							<input type="text" formControlName="clientBranch" placeholder="Enter client branch Name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('clientBranch')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('clientBranch') }}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Property & Additional Details Section -->
+				<div class="mb-8">
+					<h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Property & Additional Details</h3>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<!-- Documents Provided By Bank -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Documents Provided By Bank</label>
+							<input type="text" formControlName="documentInfo" placeholder="Documents Provided By Bank" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+						</div>
+						<!-- Property Address -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Property Address *</label>
+							<input type="text" formControlName="propertyAddress" placeholder="Address" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+							<span *ngIf="shouldShowError('propertyAddress')" class="text-red-600 text-sm mt-1 block">
+								{{ getErrorMessage('propertyAddress') }}
+							</span>
+						</div>
+						<!-- Case Type -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Case Type</label>
+							<input type="text" formControlName="caseType" placeholder="Case Type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+						</div>
+						<!-- Bank Ref No. -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Bank Ref No.</label>
+							<input type="text" formControlName="bankRefNo" placeholder="Enter Bank ref No." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+						</div>
+						<!-- Banker/Agent Name -->
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Banker/Agent Name</label>
+							<input type="text" formControlName="bankAgentName" placeholder="Enter Agent/Banker Name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+						</div>
+						<!-- Comments -->
+						<div class="col-span-1 md:col-span-2 lg:col-span-3">
+							<label class="block text-sm font-medium text-gray-700">Comments</label>
+							<textarea formControlName="comments" placeholder="Enter Comments" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="mt-8 flex justify-end space-x-4">
+					<app-button
+						*ngIf="editMode"
+						type="button"
+						variant="secondary"
+						(click)="cancelEdit()">
+						Cancel
+					</app-button>
+					<app-button type="submit" variant="primary" size="lg">
+						{{ editMode ? 'Update' : 'Submit' }}
+					</app-button>
+				</div>
+			</form>
+		</app-card>
+	</div>
+
+	<!-- Transaction Table -->
+	<div class="mt-8">
+		<!-- Phone Number Filter -->
+		<div class="mb-6 flex items-end">
+			<div class="w-64">
+				<label for="phoneFilter" class="block text-sm font-medium text-gray-700">Filter By Phone Number</label>
+				<input
+					id="phoneFilter"
+					type="text"
+					[(ngModel)]="phoneNumberFilter"
+					(input)="onPhoneFilterChange()"
+					placeholder="Enter phone number"
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+				>
+			</div>
+			<button
+				*ngIf="phoneNumberFilter"
+				(click)="phoneNumberFilter = ''; onPhoneFilterChange()"
+				class="ml-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+			>
+				Clear Filter
+			</button>
+		</div>
+
+		<app-card [title]="'Transaction Records'" [hover]="false" [shadow]="'lg'" [rounded]="'lg'">
+			<!-- Empty State -->
+			<div *ngIf="filteredTransactions.length === 0" class="text-center py-8">
+				<p class="text-gray-500">No transactions found</p>
+			</div>
+
+			<div *ngIf="filteredTransactions.length > 0" class="overflow-x-auto">
+				<table class="min-w-full divide-y divide-gray-200">
+					<thead class="bg-gray-50">
+						<tr>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mourya Ref No</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Request</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bankers / Agent Name</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Ref No</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mourya Branch</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Branch</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name of Customer</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Number</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case Type</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address of the Property</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initiation Email</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initiation Name</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initiation Contact No</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initiation Branch</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Initiated To</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Information</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status of Report</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">REPORTED BY</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance From Branch</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Postal Address Visit</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Type</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Date</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Date</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Map Link</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person Name</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person Number</th>
+						</tr>
+					</thead>
+					<tbody class="bg-white divide-y divide-gray-200">
+						<tr *ngFor="let transaction of paginatedTransactions" class="hover:bg-gray-50">
+							<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+								<div class="flex space-x-2">
+									<button
+										class="text-blue-600 hover:text-blue-900"
+										title="View">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+										</svg>
+									</button>
+									<button
+										(click)="editTransaction(transaction)"
+										class="text-green-600 hover:text-green-900"
+										title="Edit">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+										</svg>
+									</button>
+									<button
+										class="text-red-600 hover:text-red-900"
+										title="Delete">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+										</svg>
+									</button>
+								</div>
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.RefNo }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.DateofRequest }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.BankAgentName }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.BankRefNo }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.Bank }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.Branch }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.Client_Branch }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.CustName }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.CustMobile }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.CaseType }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.PropertyAddress }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.InEmail }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.InName }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.InContact }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.InBranch }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.VisitEngineer }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.DocumentInfo }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.Status }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.Remarks }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.EmpName }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.DistanceFromBranch }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.PostalAddressVisit }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.Trans_type }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.VisitDate }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.ReportDate }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.MapLink }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.ContactName }}</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.ContactNumber }}</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- Pagination -->
+				<div *ngIf="totalPages > 1" class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+					<div class="flex-1 flex justify-between sm:hidden">
+						<button
+							(click)="changePage(currentPage - 1)"
+							[disabled]="currentPage === 1"
+							[ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+							class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+							Previous
+						</button>
+						<button
+							(click)="changePage(currentPage + 1)"
+							[disabled]="currentPage === totalPages"
+							[ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+							class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+							Next
+						</button>
+					</div>
+					<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+						<div>
+							<p class="text-sm text-gray-700">
+								Showing
+								<span class="font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span>
+								to
+								<span class="font-medium">{{ (currentPage * pageSize > totalTransactions) ? totalTransactions : currentPage * pageSize }}</span>
+								of
+								<span class="font-medium">{{ totalTransactions }}</span>
+								results
+							</p>
+						</div>
+						<div>
+							<nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+								<button
+									(click)="changePage(currentPage - 1)"
+									[disabled]="currentPage === 1"
+									[ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+									class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+									<span class="sr-only">Previous</span>
+									<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+										<path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+									</svg>
+								</button>
+
+								<!-- First page button -->
+								<button
+									*ngIf="showFirstPage"
+									(click)="changePage(1)"
+									class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+									1
+								</button>
+								<span *ngIf="showFirstPage" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500">
+									...
+								</span>
+
+								<button
+									*ngFor="let page of pages"
+									(click)="changePage(page)"
+									[ngClass]="{'bg-blue-50 border-blue-500 text-blue-600': page === currentPage, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': page !== currentPage}"
+									class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+									{{ page }}
+								</button>
+
+								<!-- Last page button -->
+								<span *ngIf="showLastPage" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500">
+									...
+								</span>
+								<button
+									*ngIf="showLastPage"
+									(click)="changePage(totalPages)"
+									class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+									{{ totalPages }}
+								</button>
+
+								<button
+									(click)="changePage(currentPage + 1)"
+									[disabled]="currentPage === totalPages"
+									[ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+									class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+									<span class="sr-only">Next</span>
+									<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+										<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+									</svg>
+								</button>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</app-card>
+	</div>
+</div>

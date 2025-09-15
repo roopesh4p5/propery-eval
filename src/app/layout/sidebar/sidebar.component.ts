@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -18,7 +18,7 @@ interface MenuItem {
   imports: [CommonModule, RouterModule]
 })
 export class SidebarComponent {
-  @Input() isOpen = true;
+  // Toggle functionality removed - sidebar is now always visible on desktop
 
   menuItems: MenuItem[] = [
 
@@ -141,19 +141,19 @@ export class SidebarComponent {
   {
     label: 'Start Initiation Info',
     icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
-    route: '/manager/start-initiation',
+    route: '/manager/start-initiation-info',
     roles: ['manager']
   },
   {
     label: 'Update Transaction Info',
     icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
-    route: '/manager/update-transaction',
+    route: '/manager/update-transaction-info',
     roles: ['manager']
   },
   {
     label: 'Update Visit Info',
     icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-    route: '/manager/update-visit',
+    route: '/manager/update-visit-info',
     roles: ['manager']
   },
   {
@@ -165,13 +165,13 @@ export class SidebarComponent {
   {
     label: 'Update Report Info',
     icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
-    route: '/manager/update-report',
+    route: '/manager/update-report-info',
     roles: ['manager']
   },
   {
     label: 'Reports Status',
     icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
-    route: '/manager/reports-status',
+    route: '/manager/report-status',
     roles: ['manager']
   },
   {

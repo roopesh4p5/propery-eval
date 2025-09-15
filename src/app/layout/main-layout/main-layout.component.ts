@@ -13,9 +13,5 @@ import { FooterComponent } from '../footer/footer.component';
   imports: [CommonModule, RouterModule, HeaderComponent, SidebarComponent, FooterComponent]
 })
 export class MainLayoutComponent {
-  isSidebarOpen = true;
-
-  toggleSidebar(): void {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
+  // Sidebar toggle functionality removed - sidebar is now always visible on desktop, hidden on mobile
 }

@@ -10,7 +10,7 @@ export const routes: Routes = [
       { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
       { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
       { path: 'manager', children: [
-        { path: 'dashboard', loadComponent: () => import('./dashboard/manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent) }
+        { path: 'dashboard', loadComponent: () => import('./manager/manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent) }
       ]}
     ]
   },

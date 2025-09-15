@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'users',
-    loadComponent: () => import('./users/users.component').then(c => c.UsersComponent),
+    loadComponent: () => import('./manage-users/users.component').then(c => c.UsersComponent),
     canActivate: [AdminGuard]
   },
 

@@ -13,11 +13,11 @@ const routes: Routes = [
   },
   {
     path: 'manager-dashboard',
-    loadComponent: () => import('./manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent)
+    loadComponent: () => import('../manager/manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent)
   },
   {
     path: 'manager/dashboard',
-    loadComponent: () => import('./manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent)
+    loadComponent: () => import('../manager/manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent)
   }
 ];
 

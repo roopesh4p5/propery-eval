@@ -1,0 +1,46 @@
+/* All Branch Report specific styles */
+:host {
+  display: block;
+}
+
+.container-custom {
+  max-width: 1200px;
+}
+
+/* Table responsive styling */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Multi-select styling */
+select[multiple] {
+  min-height: 120px;
+}
+
+/* Enhanced table styling */
+table {
+  font-size: 0.875rem;
+}
+
+thead th {
+  font-weight: 600;
+  background-color: #f9fafb;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Export button styling */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Responsive pagination */
+@media (max-width: 640px) {
+  .pagination-numbers {
+    display: none;
+  }
+}

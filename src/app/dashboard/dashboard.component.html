@@ -13,8 +13,8 @@
 
   <!-- Dashboard Cards -->
   <div *ngIf="!loading && !error && dashboardData" class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-    <!-- Total Transactions -->
-    <app-card title="Total Transactions" [hover]="true" class="cursor-pointer">
+    <!-- Total Branches -->
+    <app-card title="Total Branches" [hover]="true" class="cursor-pointer">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
           <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -27,8 +27,8 @@
       </div>
     </app-card>
 
-    <!-- Mourya Users Count -->
-    <app-card title="Mourya Users" [hover]="true" class="cursor-pointer">
+    <!-- Total Manager -->
+    <app-card title="Total Manager" [hover]="true" class="cursor-pointer">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
           <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,6 +41,23 @@
       </div>
     </app-card>
 
+
+
+        <!-- Visit Completed Count -->
+    <app-card title="Visits Completed" [hover]="true" class="cursor-pointer">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
+          <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="ml-5">
+          <p class="text-2xl font-bold text-gray-900">{{ dashboardData.VisitCompletedCount }}</p>
+        </div>
+      </div>
+    </app-card>
+    
+    
     <!-- Visit Pending Count -->
     <app-card title="Visits Pending" [hover]="true" class="cursor-pointer">
       <div class="flex items-center">
@@ -55,22 +72,9 @@
       </div>
     </app-card>
 
-    <!-- Visit Completed Count -->
-    <app-card title="Visits Completed" [hover]="true" class="cursor-pointer">
-      <div class="flex items-center">
-        <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
-          <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div class="ml-5">
-          <p class="text-2xl font-bold text-gray-900">{{ dashboardData.VisitCompletedCount }}</p>
-        </div>
-      </div>
-    </app-card>
 
-    <!-- Total Bank Clients -->
-    <app-card title="Bank Clients" [hover]="true" class="cursor-pointer">
+    <!-- Total Total CLient -->
+    <app-card title="Total CLient" [hover]="true" class="cursor-pointer">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
           <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -83,8 +87,8 @@
       </div>
     </app-card>
 
-    <!-- Site Engineers Count -->
-    <app-card title="Site Engineers" [hover]="true" class="cursor-pointer">
+    <!-- Site/Visit Engineers -->
+    <app-card title="Site/Visit Engineers" [hover]="true" class="cursor-pointer">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
           <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

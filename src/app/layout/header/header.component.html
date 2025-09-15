@@ -16,24 +16,21 @@ Advisory Consultancy</span>
         </div>
       </div>
 
-      <div class="flex items-center lg:hidden">
-        <!-- Mobile menu button -->
-      </div>
+
 
       <div class="hidden lg:ml-4 lg:flex lg:items-center">
         <!-- Profile dropdown --> 
         <div class="ml-4 relative flex-shrink-0">
           <div>
-            <button type="button" class="bg-white  flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" (click)="toggleDropdown()">
+            <button type="button" class="bg-white  flex text-sm focus:outline-none  " (click)="toggleDropdown()">
               <span class="sr-only">Open user menu</span>
-              <div class="h-8 p-1  bg-blue-500 flex items-center justify-center text-white">
+              <div class="h-8 p-1 px-10 rounded-md border  bg-slate-100 flex items-center justify-center ">
                 {{ authService.currentUserValue?.firstName || authService.currentUserValue?.email }}
               </div>
             </button>
           </div>
 
           <div *ngIf="isDropdownOpen" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-            <a routerLink="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1">Your Profile</a>
             <a href="javascript:void(0)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" (click)="logout()">Sign out</a>
           </div>
         </div>

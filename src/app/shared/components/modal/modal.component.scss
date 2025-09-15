@@ -1,0 +1,22 @@
+/* Modal specific styles */
+:host {
+  display: block;
+}
+
+/* Ensure modal appears on top of everything */
+.fixed.inset-0.z-50 {
+  z-index: 9999;
+}
+
+/* Smooth animations */
+.transition-opacity {
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.transform.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}

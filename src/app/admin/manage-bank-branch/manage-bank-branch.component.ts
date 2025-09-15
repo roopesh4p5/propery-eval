@@ -258,7 +258,36 @@ export class ManageBankBranchComponent implements OnInit {
   }
 
   get pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const maxVisiblePages = 5; // Show at most 5 page numbers at a time
+    const currentPage = this.currentPage;
+    const totalPages = this.totalPages;
+
+    if (totalPages <= maxVisiblePages) {
+      // If we have fewer pages than the max, show all pages
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    // Calculate the range of pages to show
+    let startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 1);
+    let endPage = startPage + maxVisiblePages - 1;
+
+    // Adjust if we're near the end
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  }
+
+  // Helper method to check if we should show first page button
+  get showFirstPage(): boolean {
+    return this.currentPage > 3;
+  }
+
+  // Helper method to check if we should show last page button
+  get showLastPage(): boolean {
+    return this.currentPage < this.totalPages - 2;
   }
 
   get f() { return this.bankBranchForm.controls; }

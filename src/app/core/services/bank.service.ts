@@ -37,29 +37,38 @@ export interface BankBranchInfo {
 }
 
 export interface InitiationInfo {
-  ID?: number;
-  MouryaRefNo: string;
-  DateOfRequest: string;
-  BankersAgentName: string;
-  BankRefNo: string;
-  Bank: string;
-  MouryaBranch: string;
-  ClientBranch: string;
-  NameOfCustomer: string;
+  TransID: number;
+  AssignerID: string;
+  DateofRequest: string;
+  CustName: string;
+  CustMobile: string;
+  CustEmail: string;
+  ContactName: string;
   ContactNumber: string;
+  RefNo: string;
+  PropertyAddress: string;
   CaseType: string;
-  AddressOfProperty: string;
-  VisitInitiatedTo: string;
-  DocumentInformation: string;
-  StatusOfReport: string;
-  Remarks: string;
-  ReportedBy: string;
-  PostalAddressVisit: string;
-  VisitDate: string;
-  ReportDate: string;
   MapLink: string;
-  ContactPersonName: string;
-  ContactPersonNumber: string;
+  Status: string;
+  EmpName: string;
+  EmpEmail: string;
+  EmpContact: string;
+  Comments: string;
+  Attachment: string;
+  VisitAttachment: string;
+  PostalAddressVisit: string;
+  DistanceFromBranch: string;
+  VisitDate: string;
+  VisitEngineer: string;
+  CreatedDatetime: string;
+  CompletedDatetime: string;
+  Bank: string;
+  Branch: string;
+  DocumentInfo: string;
+  BankRefNo: string;
+  BankAgentName: string;
+  AssignerBranch: string;
+  ReportDate: string;
 }
 
 @Injectable({

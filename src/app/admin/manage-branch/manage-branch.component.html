@@ -133,12 +133,34 @@
                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                   </svg>
                 </button>
+                <!-- First page button -->
+                <button
+                  *ngIf="showFirstPage"
+                  (click)="changePage(1)"
+                  class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  1
+                </button>
+                <span *ngIf="showFirstPage" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500">
+                  ...
+                </span>
+
                 <button
                   *ngFor="let page of pages"
                   (click)="changePage(page)"
                   [ngClass]="{'bg-blue-50 border-blue-500 text-blue-600': page === currentPage, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': page !== currentPage}"
                   class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
                   {{ page }}
+                </button>
+
+                <!-- Last page button -->
+                <span *ngIf="showLastPage" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500">
+                  ...
+                </span>
+                <button
+                  *ngIf="showLastPage"
+                  (click)="changePage(totalPages)"
+                  class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                  {{ totalPages }}
                 </button>
                 <button
                   (click)="changePage(currentPage + 1)"

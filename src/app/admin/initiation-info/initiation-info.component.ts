@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { BankService, Bank, Branch, InitiationInfo } from '../../core/services/bank.service';
+import { AttachmentService } from '../../core/services/attachment.service';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { AlertComponent } from '../../shared/components/alert/alert.component';
+import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -17,7 +19,8 @@ import { finalize } from 'rxjs';
     ReactiveFormsModule,
     CardComponent,
     ButtonComponent,
-    AlertComponent
+    AlertComponent,
+    ModalComponent
   ]
 })
 export class InitiationInfoComponent implements OnInit {
@@ -37,9 +40,18 @@ export class InitiationInfoComponent implements OnInit {
   pageSize = 10;
   totalItems = 0;
 
+  // Attachment modal properties
+  isAttachmentModalOpen = false;
+  selectedItem: InitiationInfo | null = null;
+  selectedFile: File | null = null;
+  fileValidationMessage = '';
+  isFileValid = false;
+  uploadingFile = false;
+
   constructor(
     private formBuilder: FormBuilder,
-    private bankService: BankService
+    private bankService: BankService,
+    private attachmentService: AttachmentService
   ) { }
 
   ngOnInit(): void {
@@ -155,7 +167,115 @@ export class InitiationInfoComponent implements OnInit {
   }
 
   get pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const maxVisiblePages = 5; // Show at most 5 page numbers at a time
+    const currentPage = this.currentPage;
+    const totalPages = this.totalPages;
+
+    if (totalPages <= maxVisiblePages) {
+      // If we have fewer pages than the max, show all pages
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    // Calculate the range of pages to show
+    let startPage = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 1);
+    let endPage = startPage + maxVisiblePages - 1;
+
+    // Adjust if we're near the end
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  }
+
+  // Helper method to check if we should show first page button
+  get showFirstPage(): boolean {
+    return this.currentPage > 3;
+  }
+
+  // Helper method to check if we should show last page button
+  get showLastPage(): boolean {
+    return this.currentPage < this.totalPages - 2;
+  }
+
+  // Attachment Modal Methods
+  openAttachmentModal(item: InitiationInfo): void {
+    this.selectedItem = item;
+    this.selectedFile = null;
+    this.fileValidationMessage = '';
+    this.isFileValid = false;
+    this.isAttachmentModalOpen = true;
+  }
+
+  closeAttachmentModal(): void {
+    this.isAttachmentModalOpen = false;
+    this.selectedItem = null;
+    this.selectedFile = null;
+    this.fileValidationMessage = '';
+    this.isFileValid = false;
+    this.uploadingFile = false;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+
+      // Validate the file
+      const validation = this.attachmentService.validateFile(this.selectedFile);
+      this.isFileValid = validation.isValid;
+      this.fileValidationMessage = validation.message;
+    } else {
+      this.selectedFile = null;
+      this.fileValidationMessage = '';
+      this.isFileValid = false;
+    }
+  }
+
+  uploadAttachment(): void {
+    if (!this.selectedFile || !this.selectedItem || !this.isFileValid) {
+      return;
+    }
+
+    // Use TransID as the reference number for upload
+    const refNo = String(this.selectedItem.TransID || '');
+
+    if (!refNo) {
+      this.error = 'Missing Transaction ID for upload';
+      return;
+    }
+
+    this.uploadingFile = true;
+    this.error = '';
+    this.success = '';
+
+    this.attachmentService.uploadReportAttachment(refNo, this.selectedFile)
+      .pipe(
+        finalize(() => this.uploadingFile = false)
+      )
+      .subscribe({
+        next: (response) => {
+          if (!response.error) {
+            this.success = 'Attachment uploaded successfully!';
+            this.closeAttachmentModal();
+          } else {
+            this.error = response.message || 'Failed to upload attachment';
+          }
+        },
+        error: (err) => {
+          console.error('Error uploading attachment:', err);
+          this.error = 'Error uploading attachment. Please try again.';
+        }
+      });
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   get f() { return this.filterForm.controls; }

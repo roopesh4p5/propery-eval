@@ -18,7 +18,7 @@ import { finalize } from 'rxjs';
     ReactiveFormsModule,
     CardComponent,
     ButtonComponent,
-    AlertComponent
+    AlertComponent,
   ]
 })
 export class BranchReportComponent implements OnInit {
@@ -36,7 +36,7 @@ export class BranchReportComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private reportService: ReportService,
-    private bankService: BankService
+    private bankService: BankService,
   ) { }
 
   ngOnInit(): void {
@@ -86,8 +86,6 @@ export class BranchReportComponent implements OnInit {
 
     const formValues = this.reportForm.value;
     const branch = 'ALL'; // Always use 'ALL' for branch
-    const fromDate = this.formatDateForApi(formValues.fromDate);
-    const toDate = this.formatDateForApi(formValues.toDate);
 
     this.reportService.getBranchReport(branch, fromDate, toDate)
       .pipe(
@@ -109,33 +107,14 @@ export class BranchReportComponent implements OnInit {
       });
   }
 
-  // Helper method to format date for API (YYYY-MM-DD)
-  formatDateForApi(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  }
-
-  // Helper method to format date for input field (YYYY-MM-DD)
-  formatDateForInput(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
   // Helper method to format date for display (DD/MM/YYYY)
   formatDateForDisplay(dateString: string): string {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
   }
 
   clearForm(): void {
     this.reportForm.reset({
-      fromDate: '',
-      toDate: ''
+      fromDate: null,
+      toDate: null
     });
   }
 

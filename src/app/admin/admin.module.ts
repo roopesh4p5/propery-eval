@@ -75,6 +75,11 @@ const routes: Routes = [
     path: 'all-branch-report',
     loadComponent: () => import('./all-branch-report/all-branch-report.component').then(c => c.AllBranchReportComponent),
     canActivate: [AdminGuard]
+  },
+  {
+    path: 'bank-wise-report',
+    loadComponent: () => import('./bank-wise-report/bank-wise-report.component').then(c => c.BankWiseReportComponent),
+    canActivate: [AdminGuard]
   }
 ];
 
